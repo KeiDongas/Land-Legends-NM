@@ -1,0 +1,6 @@
+uvicorn
+fastapi[standard]
+pydantic
+sqlalchemy[asyncio]
+python-dotenv
+psycopg[binary,pool]  # to install package and dependencies
