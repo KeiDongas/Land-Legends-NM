@@ -22,7 +22,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
     username = Column(String, unique=True, nullable=False)
-    password = Column(String, nullable=False)
+    hashed_password = Column(String, nullable=False)
     isBan = Column(Boolean, default=False)
 
 class LevelModel(BaseModel):

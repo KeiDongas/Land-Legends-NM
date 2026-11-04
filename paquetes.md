@@ -20,9 +20,8 @@ Se encarga de las variables de entorno.
 # psycopg
 Es el adaptador para postgreSQL, como un puente o conector que permite a los scripts de Python comunicarse directamente con una base de datos PostgreSQL para ejecutar consultas SQL
 
-# SQLModel
-fusionar SQLAlchemy y Pydantic en una sola clase (al final no se uso)
-
+# bcrypt
+biblioteca para generar hashes de contraseñas
  
 
 

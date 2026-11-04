@@ -3,6 +3,7 @@ from database.db import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from database.models import User, UserCreate, UserResponse
+from utils.security import set_pwd_hash
 
 router = APIRouter()
 
@@ -12,7 +13,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     # Instanciar el objeto de SQLAlchemy sin el ID
     new_user = User(
         username=user.username,
-        password=user.password
+        hashed_password=set_pwd_hash(user.password)
     )
     
     # Agregar y guardar en Supabase
@@ -45,3 +46,7 @@ def delete_user(user_id: int, db:Session = Depends(get_db)):
     db.delete(user)
     db.commit()
     return {"message": "user deleted"}
+
+@router.get("/users/login/")
+def login(username: str, password: str, db:Session = Depends(get_db)):
+    pass
