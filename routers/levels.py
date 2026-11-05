@@ -6,14 +6,14 @@ from sqlalchemy.exc import IntegrityError
 
 router = APIRouter()
 
-@router.get("/level/search/{level_id}", response_model=LevelModel)
+@router.get("/search/{level_id}", response_model=LevelModel)
 def get_level_byId(level_id: str, db: Session = Depends(get_db)):
     level = db.query(Level).filter(Level.id == level_id).first()
     if not level:
         raise HTTPException(status_code=404, detail="Level not found!")
     return level
 
-@router.post("/level/create", response_model=LevelModel)
+@router.post("/create", response_model=LevelModel)
 def create_level(level: LevelModel, db: Session = Depends(get_db)):
   # Convierte el esquema de Pydantic directamente a los argumentos del modelo de SQLAlchemy
   new_level = Level(**level.model_dump())

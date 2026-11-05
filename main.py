@@ -11,5 +11,5 @@ app = FastAPI()
 def root():
     return {"message": "working","author": "elabusador"}
 
-app.include_router(users.router)
-app.include_router(levels.router)
+app.include_router(users.router, prefix="/users", tags=["Users"])
+app.include_router(levels.router, prefix="/level", tags=["Levels"])

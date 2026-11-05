@@ -3,7 +3,7 @@ from database.db import get_db
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from database.models import User, UserCreate, UserResponse
-from utils.security import set_pwd_hash
+from utils.security import set_pwd_hash, verify_password
 
 router = APIRouter()
 
@@ -31,14 +31,14 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     # Retornar la instancia (FastAPI la filtra con UserResponse)
     return new_user
 
-@router.get("/users/{user_id}", response_model=UserResponse)
+@router.get("/{user_id}", response_model=UserResponse)
 def get_user(user_id: int, db:Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="User not found!")
     return user
 
-@router.delete("/users/{user_id}")
+@router.delete("/{user_id}")
 def delete_user(user_id: int, db:Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
@@ -47,6 +47,13 @@ def delete_user(user_id: int, db:Session = Depends(get_db)):
     db.commit()
     return {"message": "user deleted"}
 
-@router.get("/users/login/")
-def login(username: str, password: str, db:Session = Depends(get_db)):
-    pass
+@router.post("/login")
+def login(user_data: UserCreate, db:Session = Depends(get_db)):
+    user = db.query(User).filter(User.username == user_data.username).first()
+    if not user:
+        return HTTPException(status_code=404, detail="User not found!")
+    is_valid = verify_password(user_data.password,user.hashed_password)
+    if (is_valid):
+        return {"message": "Succesly!"}
+    else:
+        return {"message": "incorrect!"}
