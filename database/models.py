@@ -1,22 +1,8 @@
-from pydantic import BaseModel, Field
-from sqlalchemy import Boolean, Column, Integer, String, BigInteger
+from pydantic import BaseModel
+from sqlalchemy import Boolean, Column, Integer, String, DateTime, JSON
 from database.db import Base
+import datetime
 
-# esquema para recibir la entrada (POST /users)
-class UserCreate(BaseModel):
-    username: str
-    password: str
-
-# esquema para moldear la respuesta JSON al cliente
-class UserResponse(BaseModel):
-    id: int
-    username: str
-    isBan: bool
-
-    class Config:
-        from_attributes = True  # Permite mapear desde el objeto de SQLAlchemy
-
-# modelo de la Base de Datos (SQLAlchemy)
 class User(Base):
     __tablename__ = "users_table"
 
@@ -25,27 +11,49 @@ class User(Base):
     hashed_password = Column(String, nullable=False)
     isBan = Column(Boolean, default=False)
 
-class LevelModel(BaseModel):
-    id: str
-    id_author:int
-    title:str
-    description:str
-    game_style:str
-    theme:str
-    time_of_day:int
-    time_limit:int
-    upload_date:str
-
 class Level(Base):
     __tablename__ = "levels_table"
 
-    id=Column(String(11), primary_key=True, index=True)
-    id_author=Column(Integer)
-    title=Column(String)
-    description=Column(String)
-    game_style=Column(String)
+    id = Column(String(11), primary_key=True, index=True)
+    id_author = Column(Integer, nullable=False)
+    title = Column(String, nullable=False)
+    description = Column(String)
+    game_style = Column(Integer)
     theme = Column(String)
     time_of_day = Column(Integer)
     time_limit = Column(Integer)
-    upload_date = Column(String)
+    upload_date = Column(DateTime, default=datetime.datetime.utcnow)
     
+    level_data = Column(JSON)
+
+class UserCreate(BaseModel):
+    username: str
+    password: str
+
+
+class UserResponse(BaseModel):
+    id: int
+    username: str
+    isBan: bool
+
+    class Config:
+        from_attributes = True
+
+class LevelCreate(BaseModel):
+    id: str
+    id_author: int
+    level_base64: str
+
+class LevelResponse(BaseModel):
+    id: str
+    id_author: int
+    title: str
+    description: str
+    game_style: int
+    theme: str
+    time_of_day: int
+    time_limit: int
+    upload_date: datetime.datetime
+    
+    class Config:
+        from_attributes = True
